@@ -43,6 +43,31 @@ class RouteServiceProvider extends ServiceProvider
                 ->namespace($this->namespace)
                 ->group(base_path('routes/api.php'));
 
+            Route::prefix('categories')
+                ->middleware('api')
+                ->namespace($this->namespace)
+                ->group(app_path('Modules/Category/routes.php'));
+
+            Route::prefix('comments')
+                ->middleware('api')
+                ->namespace($this->namespace)
+                ->group(app_path('Modules/Comment/routes.php'));
+
+            Route::prefix('posts')
+                ->middleware('api')
+                ->namespace($this->namespace)
+                ->group(app_path('Modules/Post/routes.php'));
+
+            Route::prefix('tags')
+                ->middleware('api')
+                ->namespace($this->namespace)
+                ->group(app_path('Modules/Tag/routes.php'));
+
+            Route::prefix('users')
+                ->middleware('api')
+                ->namespace($this->namespace)
+                ->group(app_path('Modules/User/routes.php'));
+
             Route::middleware('web')
                 ->namespace($this->namespace)
                 ->group(base_path('routes/web.php'));
