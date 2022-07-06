@@ -5,6 +5,7 @@ namespace App\Modules\User\Controllers;
 use App\Modules\User\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -21,8 +22,15 @@ class UserController extends Controller
         $this->repository = new UserRepository();
     }
 
+    /**
+     * Creates a new user
+     *
+     * @param array $data
+     * @return void
+     */
     public function store(array $data): void
     {
+        $data['password'] = Hash::make($data['password']);
         $this->repository->store($data);
     }
 

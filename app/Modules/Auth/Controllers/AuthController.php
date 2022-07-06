@@ -8,31 +8,38 @@ use App\Modules\User\Controllers\UserController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
 {
-    private $c;
+    /**
+     * @var UserController
+     */
+    private UserController $userController;
 
-    public function __construct($c = new UserController())
+    /**
+     * AuthController constructor
+     *
+     * @param UserController $controller
+     */
+    public function __construct(UserController $controller)
     {
-
+        $this->userController = $controller;
     }
+
     /**
      * Register new user
      *
-     * @param Request $request
+     * @param RegisterRequest $request
      * @return JsonResponse
      */
     public function register(RegisterRequest $request): JsonResponse
     {
         $data = $request->validated();
+        $this->userController->store($data);
 
-        $userController->store($data);
-        return response()->json([
-            'status'  => true,
-            'message' => 'Регистрация прошла успешно',
-        ]);
+        Auth::attempt($data);
+
+        return response()->json(['status'  => true]);
     }
 
     /**
@@ -44,36 +51,22 @@ class AuthController extends Controller
     public function login(Request $request): JsonResponse
     {
         $data = $request->all();
-        $status = false;
-
-        if (Auth::attempt($data)) {
-            $status = true;
-        }
-
-        return response()->json([
-            'status'  => $status,
-            'message' => $status
-                ? 'Вы успешно авторизированы'
-                : 'Ошибка. Некорректные данные',
-        ]);
+        return response()->json(['status'  => Auth::attempt($data)]);
     }
 
     /**
      * Logout
      *
-     * @return array
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function logout(): array
+    public function logout(Request $request): JsonResponse
     {
-        if (!Auth::check()) return [
-            'status' => false,
-        ];
+        if (!Auth::check())
+            return response()->json(['status' => false]);
+        $request->session()->flush();
 
-        Session::flush();
-
-        return [
-            'status' => true,
-        ];
+        return response()->json(['status' => true]);
     }
 
     /**
@@ -83,8 +76,6 @@ class AuthController extends Controller
      */
     public function check(): JsonResponse
     {
-        return response()->json([
-            'status' => Auth::check(),
-        ]);
+        return response()->json(['status' => Auth::check()]);
     }
 }
