@@ -28,7 +28,7 @@ class CategoryRepository
 
     public function show(int $id): array
     {
-        $this->category->find($id)->toArray();
+        return $this->category->find($id)->toArray();
     }
 
     public function store(array $data): void

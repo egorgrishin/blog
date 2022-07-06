@@ -3,50 +3,59 @@
 namespace App\Modules\Auth\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\User\Models\User;
+use App\Modules\Auth\Requests\RegisterRequest;
+use App\Modules\User\Controllers\UserController;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
 {
-    /**
-     * @param Request $request
-     * @return array
-     */
-    public function register(Request $request): array
-    {
-        $data = $request->all();
-        User::create($data);
+    private $c;
 
-        return [
+    public function __construct($c = new UserController())
+    {
+
+    }
+    /**
+     * Register new user
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function register(RegisterRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+
+        $userController->store($data);
+        return response()->json([
             'status'  => true,
-            'message' => 'Вы успешно зарегистрированы',
-        ];
+            'message' => 'Регистрация прошла успешно',
+        ]);
     }
 
     /**
      * Login
      *
      * @param Request $request
-     * @return array
+     * @return JsonResponse
      */
-    public function login(Request $request): array
+    public function login(Request $request): JsonResponse
     {
         $data = $request->all();
+        $status = false;
 
         if (Auth::attempt($data)) {
-            $success = true;
-            $message = 'Вы успешно авторизированы';
-        } else {
-            $success = false;
-            $message = 'Ошибка. Некорректные данные';
+            $status = true;
         }
 
-        return [
-            'success' => $success,
-            'message' => $message,
-        ];
+        return response()->json([
+            'status'  => $status,
+            'message' => $status
+                ? 'Вы успешно авторизированы'
+                : 'Ошибка. Некорректные данные',
+        ]);
     }
 
     /**
@@ -65,5 +74,17 @@ class AuthController extends Controller
         return [
             'status' => true,
         ];
+    }
+
+    /**
+     * Checks user to auth
+     *
+     * @return JsonResponse
+     */
+    public function check(): JsonResponse
+    {
+        return response()->json([
+            'status' => Auth::check(),
+        ]);
     }
 }

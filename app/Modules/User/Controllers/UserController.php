@@ -20,4 +20,20 @@ class UserController extends Controller
     {
         $this->repository = new UserRepository();
     }
+
+    public function store(array $data): void
+    {
+        $this->repository->store($data);
+    }
+
+    /**
+     * Checks the email is busy
+     *
+     * @param string $email
+     * @return bool
+     */
+    public function isBusyEmail(string $email): bool
+    {
+        return $this->repository->isBusyEmail($email);
+    }
 }
