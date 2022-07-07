@@ -1,38 +1,45 @@
-export default () => {
-  const loginCheckApi = async () => {
-    return await axios.get('/sanctum/csrf-cookie').then(async () => {
-      return await axios.post('/api/auth/check').then(response => response.data)
-    })
-  }
+async function setCsrfCookie() {
+  await axios.get('/sanctum/csrf-cookie')
+}
 
-  const loginApi = async (email, password) => {
-    let response = await axios.post('/api/auth/login', {
-      email: email,
-      password: password,
-    })
-    return response.data
-  }
+async function loginCheckApi() {
+  await setCsrfCookie()
+  return await axios.post('/api/auth/check')
+    .then(response => response.data)
+}
 
-  const logoutApi = async () => {
-    let response = await axios.post('/api/auth/logout')
-    return response.data
-  }
+async function loginApi(email, password) {
+  await setCsrfCookie()
+  return await axios.post('/api/auth/login', {
+    email: email,
+    password: password,
+  })
+    .then(response => response)
+    .catch(error => error.response)
+}
 
-  const registerApi = async (name, email, password, password_confirmation) => {
-    return await axios.post('/api/auth/register', {
-      name: name,
-      email: email,
-      password: password,
-      password_confirmation: password_confirmation,
-    })
-      .then(response => response)
-      .catch(error => error.response)
-  }
+async function logoutApi() {
+  await setCsrfCookie()
+  return await axios.post('/api/auth/logout')
+    .then(response => response)
+    .catch(error => error.response)
+}
 
-  return {
-    loginApi,
-    logoutApi,
-    registerApi,
-    loginCheckApi,
-  }
+async function registerApi(name, email, password, password_confirmation) {
+  await setCsrfCookie()
+  return await axios.post('/api/auth/register', {
+    name: name,
+    email: email,
+    password: password,
+    password_confirmation: password_confirmation,
+  })
+    .then(response => response)
+    .catch(error => error.response)
+}
+
+export {
+  loginApi,
+  logoutApi,
+  registerApi,
+  loginCheckApi,
 }

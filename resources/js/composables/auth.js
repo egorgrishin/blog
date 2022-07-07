@@ -1,61 +1,51 @@
 import { useAuthStore } from '../stores/auth'
-import auth from "../api/auth";
+import { loginApi, logoutApi, registerApi} from "../api/auth";
 import router from "../router";
 
-export default () => {
-  const loginCheck = async () => {
-    const { loginCheckApi } = auth()
+async function login(email, password) {
+  let response = await loginApi(email, password)
+
+  if (response.status === 200 && response.data.status) {
     const authStore = useAuthStore()
-    authStore.isLogged = (await loginCheckApi()).status
-  }
-
-  const login = async (email, password) => {
-    const { loginApi } = auth()
-    let response = await loginApi(email, password)
-
-    if (response.status) {
-      const authStore = useAuthStore()
-      authStore.isLogged = true
-      await router.push('/')
-    }
-  }
-
-  const logout = async () => {
-    const { logoutApi } = auth()
-    let response = await logoutApi()
-
-    if (response.status) {
-      const authStore = useAuthStore()
-      authStore.isLogged = false
-    }
-  }
-
-  const register = async (name, email, password, password_confirmation) => {
-    const { registerApi } = auth()
-    let response = await registerApi(name, email, password, password_confirmation)
-
-    console.log(response.status)
-
-    if (response.status === 200) {
-      if (response.data.status) {
-        const authStore = useAuthStore()
-        authStore.isLogged = true
-        await router.push('/')
-      }
-    }
-
-    return {
-      status: false,
-      data: Object.keys(response.data).length
-        ? response.data
-        : { message: 'Что-то пошло не так. Попробуйте еще раз' }
-    }
+    authStore.isLogged = true
+    await router.push('/')
   }
 
   return {
-    loginCheck,
-    login,
-    logout,
-    register
+    status: false,
+    message: 'Некорректные данные'
   }
+}
+
+async function logout() {
+  let response = await logoutApi()
+
+  if (response.status === 200 && response.data.status) {
+    const authStore = useAuthStore()
+    authStore.isLogged = false
+    console.log(authStore.isLogged)
+  }
+}
+
+async function register(name, email, password, password_confirmation) {
+  let response = await registerApi(name, email, password, password_confirmation)
+
+  if (response.status === 200 && response.data.status) {
+    const authStore = useAuthStore()
+    authStore.isLogged = true
+    await router.push('/')
+  }
+
+  return {
+    status: false,
+    data: Object.keys(response.data).length
+      ? response.data
+      : { message: 'Что-то пошло не так. Попробуйте еще раз' }
+  }
+}
+
+export {
+  login,
+  logout,
+  register
 }
