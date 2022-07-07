@@ -1,35 +1,23 @@
 <template>
-	<label>
-		Email:
-		<input type="email" v-model="email">
-	</label>
-	<label>
-		Password:
-		<input type="password" v-model="password">
-	</label>
-	<h1 @click="login(email, password)">Login</h1>
+	<form @submit.prevent="login(email, password)">
+		<label>
+			Email:
+			<input type="email" v-model="email">
+		</label>
+		<label>
+			Password:
+			<input type="password" v-model="password">
+		</label>
+		<button type="submit">Login</button>
+	</form>
 </template>
 
-<script>
-	import { ref, onMounted } from 'vue'
-  import auth from "../composables/auth";
-	
-  export default {
-    name: "Login",
-		setup() {
-      const { loginCheck, login } = auth()
-      onMounted(loginCheck)
-      
-      let email = ref('')
-      let password = ref('')
+<script setup>
+import { ref } from 'vue'
+import { login } from "../composables/auth";
 
-			return {
-        email,
-        password,
-        login,
-			}
-		}
-  }
+const email = ref('')
+const password = ref('')
 </script>
 
 <style scoped>

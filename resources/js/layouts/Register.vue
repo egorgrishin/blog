@@ -1,56 +1,33 @@
 <template>
-	<label>
-		Nickname:
-		<input type="text" v-model="name">
-	</label>
-	<label>
-		Email:
-		<input type="email" v-model="email">
-	</label>
-	<label>
-		Password:
-		<input type="password" v-model="password">
-	</label>
-	<label>
-		Confirm password:
-		<input type="password" v-model="password_confirmation">
-	</label>
-	<h1 @click="register(name, email, password, password_confirmation)">Login</h1>
-	{{ asd }}
+	<form @submit.prevent="register(name, email, password, password_confirmation)">
+		<label>
+			Nickname:
+			<input type="text" v-model="name">
+		</label>
+		<label>
+			Email:
+			<input type="email" v-model="email">
+		</label>
+		<label>
+			Password:
+			<input type="password" v-model="password">
+		</label>
+		<label>
+			Confirm password:
+			<input type="password" v-model="password_confirmation">
+		</label>
+		<button type="submit">Register</button>
+	</form>
 </template>
 
-<script>
-	import { ref, onMounted } from 'vue'
-	import auth from "../composables/auth";
-	
-  export default {
-    name: "Register",
-		setup() {
-      const name = ref('')
-      const email = ref('')
-      const password = ref('')
-      const password_confirmation = ref('')
+<script setup>
+import { ref } from 'vue'
+import { register } from "../composables/auth";
 
-			const { register } = auth()
-
-      let asd = ref(null)
-      const qwe = async () => asd.value = await register(name, email, password, password_confirmation)
-      onMounted(qwe)
-			setTimeout(async () => {
-			  console.log(asd.value)
-			  // asd.value = qwe()
-      }, 3000)
-			
-			return {
-        name,
-				email,
-				password,
-        password_confirmation,
-        register,
-        asd
-			}
-    }
-  }
+const name = ref('')
+const email = ref('')
+const password = ref('')
+const password_confirmation = ref('')
 </script>
 
 <style scoped>

@@ -21,27 +21,13 @@
 	</header>
 </template>
 
-<script>
-	import { storeToRefs } from 'pinia'
-	import { onMounted } from 'vue'
-	import { useAuthStore } from '../stores/auth'
-  import auth from "../composables/auth";
+<script setup>
+import { storeToRefs } from 'pinia'
+import { useAuthStore } from '../stores/auth'
+import { logout } from "../composables/auth";
 	
-  export default {
-    name: "Header",
-		setup() {
-      const authStore = useAuthStore()
-      const { isLogged } = storeToRefs(authStore)
-
-      const { loginCheck, logout } = auth()
-      onMounted(loginCheck)
-			
-			return {
-        isLogged,
-        logout,
-			}
-		}
-  }
+const authStore = useAuthStore()
+const { isLogged } = storeToRefs(authStore)
 </script>
 
 <style scoped>
