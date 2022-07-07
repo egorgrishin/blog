@@ -5,7 +5,7 @@ namespace App\Modules\Auth\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class RegisterRequest extends FormRequest
+class LoginRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,13 +21,12 @@ class RegisterRequest extends FormRequest
      * Get the validation rules that apply to the request.
      *
      * @return array
-     */
+	 */
     public function rules(): array
 	{
         return [
-            'name'     => 'required|string|min:3|max:120',
-            'email'    => 'required|email|unique:users',
-            'password' => 'required|string|min:3|confirmed',
+			'email'    => 'required',
+			'password' => 'required',
         ];
     }
 }

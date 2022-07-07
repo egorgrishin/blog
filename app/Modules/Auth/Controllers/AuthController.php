@@ -3,10 +3,11 @@
 namespace App\Modules\Auth\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Auth\Requests\LoginRequest;
+use App\Modules\Auth\Requests\LogoutRequest;
 use App\Modules\Auth\Requests\RegisterRequest;
 use App\Modules\User\Controllers\UserController;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
@@ -38,17 +39,16 @@ class AuthController extends Controller
         $this->userController->store($data);
 
         Auth::attempt($data);
-
         return response()->json(['status'  => true]);
     }
 
     /**
      * Login
      *
-     * @param Request $request
+     * @param LoginRequest $request
      * @return JsonResponse
      */
-    public function login(Request $request): JsonResponse
+    public function login(LoginRequest $request): JsonResponse
     {
         $data = $request->all();
         return response()->json(['status'  => Auth::attempt($data)]);
@@ -57,10 +57,10 @@ class AuthController extends Controller
     /**
      * Logout
      *
-     * @param Request $request
+     * @param LogoutRequest $request
      * @return JsonResponse
      */
-    public function logout(Request $request): JsonResponse
+    public function logout(LogoutRequest $request): JsonResponse
     {
         if (!Auth::check())
             return response()->json(['status' => false]);
