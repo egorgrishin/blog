@@ -23,7 +23,6 @@ async function logout() {
   if (response.status === 200 && response.data.status) {
     const authStore = useAuthStore()
     authStore.isLogged = false
-    console.log(authStore.isLogged)
   }
 }
 
